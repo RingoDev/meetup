@@ -5,9 +5,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import webSocket from "ws";
 import http from 'http'
-//Import Routes
 import getRoute from './routes/users';
-import {initializeDB} from "./methods";
+import {initializeDB} from "./mongoDatastore";
 import middleware from "./middleware";
 
 dotenv.config()

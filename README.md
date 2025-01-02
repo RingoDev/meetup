@@ -10,4 +10,8 @@ Der Client startet auf port 3000
 
 ## Server
 
-Der Server startet auf port 3001
+The server needs to be able to connect to a Mongo DB instance
+
+You can spin one up locally with `mongodb://localhost:27017/`
+
+WIP currently testing out Bun

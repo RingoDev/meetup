@@ -10,6 +10,7 @@
     "rootDir": "src",
     "baseUrl": ".",
     "strict": true,
+    "skipLibCheck": true,
     "paths": {
       "*": [
         "node_modules/*"

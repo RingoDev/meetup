@@ -1,4 +1,4 @@
-import {User} from "./data";
+import {User} from "../types/user";
 
 export interface WS_MESSAGE_FROM_SERVER {
     type: typeof MESSAGE | typeof UPDATE_USERS | typeof USER_CREATED

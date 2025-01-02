@@ -3,5 +3,4 @@ export interface User {
     name: string,
     longitude?: number,
     latitude?: number
-
 }

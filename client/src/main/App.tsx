@@ -1,6 +1,6 @@
 import React from 'react';
 import Location from './Location'
-import Map from "../map/Map";
+import Leaflet from "../map/Leaflet";
 import Users from "../users/Users";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../redux/rootReducer";
@@ -25,7 +25,7 @@ class App extends React.Component<PropsFromRedux, {}> {
                         <div>You have to activate Location Services to use this App</div>}
                     <div id={'container'}>
                         <div id={'map-container'}>
-                            <Map/>
+                            <Leaflet/>
                         </div>
                         <div id={'userContainer'} className={'p-5'}>
                             <Users fetchInterval={5000}/>

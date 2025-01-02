@@ -1,6 +1,6 @@
 import UserModel from "./models/User";
 import {Document} from "mongoose"
-import {User} from "./data";
+import {User} from "./types/user";
 
 
 /**
@@ -64,8 +64,8 @@ export function updateUser(user: User) {
 export function removeUser(id: string) {
     return new Promise((resolve, reject) => {
         UserModel.findByIdAndRemove(id)
-            .then(val => resolve(val))
-            .catch(err => reject(err))
+            .then((val :any) => resolve(val))
+            .catch((err:any) => reject(err))
     })
 }
 
@@ -87,7 +87,7 @@ export function getAllUsers() {
                 }
                 resolve(result)
             })
-            .catch((err) => reject(err))
+            .catch((err:any) => reject(err))
     })
 }
 

@@ -1,14 +1,14 @@
 import express from 'express';
 import UserModel from '../models/User';
+import {User} from "../types/user";
 
 const router = express.Router();
 
 //GETS BACK ALL THE USER/ENTRIES
-router.get('/', (req, res) => {
-    UserModel.find().then((users) => {
+router.get('/', (_, res) => {
+    UserModel.find().then((users:User[]) => {
         res.json(users)
-    })
-        .catch(err => res.json({message: err}))
+    }).catch((err: any) => res.json({message: err}))
 
 });
 

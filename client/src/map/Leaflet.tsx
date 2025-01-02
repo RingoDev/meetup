@@ -1,6 +1,4 @@
 import React, {useRef, useEffect, useState} from "react";
-import mapboxgl from "mapbox-gl";
-
 import "./Map.css";
 import {AppUser} from "../data/User";
 import {RootState} from "../redux/rootReducer";
@@ -8,15 +6,15 @@ import {getSortedUsers, getUsers} from "../redux/user/user.reducer";
 import {ThunkDispatch} from "redux-thunk";
 import {connect, ConnectedProps} from "react-redux";
 import {calculate} from "./calculate";
+import {Marker, Map, Popup, Icon, DivIcon, TileLayer} from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-
-mapboxgl.accessToken = import.meta.env.REACT_APP_MAPBOX_ACCESS_TOKEN ? import.meta.env.REACT_APP_MAPBOX_ACCESS_TOKEN : '';
 
 interface MapProps {
 }
 
 interface UserMarker {
-    marker: mapboxgl.Marker,
+    marker: Marker,
     user: AppUser
 }
 
@@ -24,24 +22,28 @@ interface UserMarker {
 type PropsFromRedux = ConnectedProps<typeof connector> & MapProps
 
 
-const Map: React.FC<PropsFromRedux> = (props) => {
+const Leaflet: React.FC<PropsFromRedux> = (props) => {
 
     const mapContainerRef = useRef<HTMLDivElement>(null);
     // const popUpRef = useRef(new mapboxgl.Popup({offset: 15}));
-    const [map, setMap] = useState<mapboxgl.Map>()
+    const [map, setMap] = useState<Map>()
     const [userMarkers, setUserMarkers] = useState<UserMarker[]>([])
-    const [midMarker, setMidMarker] = useState<{ marker: mapboxgl.Marker, popUp: mapboxgl.Popup }>();
+    const [midMarker, setMidMarker] = useState<{ marker: Marker, popUp: Popup }>();
 
     // initialize map when component mounts
     useEffect(() => {
 
-        const myMap = new mapboxgl.Map({
-            container: mapContainerRef.current ? mapContainerRef.current : 'map',
+        const myMap = new Map(mapContainerRef.current ? mapContainerRef.current : 'map', {
             // See style options here: https://docs.mapbox.com/api/maps/#styles
-            style: "mapbox://styles/mapbox/dark-v10",
-            center: [14.317141245631463, 48.33830196724644],
+            // style: "mapbox://styles/mapbox/dark-v10",
+            center: [48.33830196724644,14.317141245631463],
             zoom: 12
         });
+
+        new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(myMap);
         setMap(myMap)
 
         // add navigation control (zoom buttons)
@@ -78,12 +80,12 @@ const Map: React.FC<PropsFromRedux> = (props) => {
                             break;
                         }
                         foundMarker = true;
-                        userMarker.marker.setLngLat({lng: user.longitude, lat: user.latitude})
+                        userMarker.marker.setLatLng({lng: user.longitude, lat: user.latitude})
                         break;
                     }
                 }
                 if (!foundMarker && user.checked) {
-                    const popUp = new mapboxgl.Popup().setText(user.name)
+                    const popUp = new Popup().setPopupContent(user.name)
                     // create a marker for user
 
                     const markerIcon = document.createElement("i")
@@ -93,9 +95,12 @@ const Map: React.FC<PropsFromRedux> = (props) => {
                         markerIcon.id = "main-marker"
                         markerIcon.className = "marker fas fa-map-marker-alt fa-4x"
                     }
-                    const marker = new mapboxgl.Marker(markerIcon, {})
-                        .setPopup(popUp)
-                        .setLngLat({lng: user.longitude, lat: user.latitude})
+
+                    const icon = new DivIcon({html: markerIcon})
+                    console.log(user.name, user.longitude, user.latitude)
+                    const marker = new Marker({lng: user.longitude, lat: user.latitude})
+                        .setIcon(icon)
+                        .setPopupContent(popUp)
                         .addTo(map)
 
                     const userMarker: UserMarker = {
@@ -116,8 +121,8 @@ const Map: React.FC<PropsFromRedux> = (props) => {
         if (midMarker) {
             if (response) {
                 // change marker
-                midMarker.marker.setLngLat({lng: response.longitude, lat: response.latitude})
-                midMarker.popUp.setText(response.longitude + '\n' + response.latitude)
+                midMarker.marker.setLatLng({lng: response.longitude, lat: response.latitude})
+                midMarker.popUp.setPopupContent(response.longitude + '\n' + response.latitude)
             } else {
                 // remove marker from map
                 midMarker.popUp.remove();
@@ -128,16 +133,18 @@ const Map: React.FC<PropsFromRedux> = (props) => {
         } else {
             if (response) {
                 //create popup
-                const popUp = new mapboxgl.Popup().setText(response.longitude + '\n' + response.latitude)
+                const popUp = new Popup().setPopupContent(response.longitude + '\n' + response.latitude)
                 //create marker
                 const markerIcon = document.createElement("i")
                 markerIcon.id = "mid-point"
                 markerIcon.className = "marker middle-point fas fa-map-marker-alt fa-5x"
-                const marker = new mapboxgl.Marker(markerIcon, {})
-                    .setLngLat({lng: response.longitude, lat: response.latitude})
+                const icon = new DivIcon({html: markerIcon})
+                const marker = new Marker({lng: response.longitude, lat: response.latitude})
+                    .setIcon(icon)
                     .addTo(map)
-                marker.setPopup(popUp)
-                setMidMarker({marker,popUp})
+
+                marker.setPopupContent(popUp)
+                setMidMarker({marker, popUp})
             }
         }
     }
@@ -159,4 +166,4 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(Map)
+export default connector(Leaflet)
