@@ -1,17 +1,16 @@
 body {
-    background-color: #343436;
+  background-color: #343436;
 }
 
 #chooseName {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-#nameInput{
-    margin-bottom: 1rem;
+#nameInput {
+  margin-bottom: 1rem;
 }
 
 .card-title {
-color: white;
+  color: white;
 }
-

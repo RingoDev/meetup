@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
-let baseURL = 'https://backend.ringodev.com:3000'
+let baseURL = "https://backend.ringodev.com:3000";
 
-if (process.env.NODE_ENV === 'development') baseURL = 'http://localhost:3001'
+if (process.env.NODE_ENV === "development") baseURL = "http://localhost:3001";
 
-const axiosInstance = axios.create({baseURL})
+const axiosInstance = axios.create({ baseURL });
 
-export default axiosInstance
+export default axiosInstance;

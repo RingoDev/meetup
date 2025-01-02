@@ -10,20 +10,18 @@
 /*removes links bottom right
 not because i dont like contribution but because its buggy*/
 .mapboxgl-ctrl-attrib {
-    display: none;
+  display: none;
 }
-
-
 
 #main-marker {
-    color:lightblue;
+  color: lightblue;
 }
 
-#mid-point{
-    color:rgb(255, 179, 0);
+#mid-point {
+  color: rgb(255, 179, 0);
 }
 
 .map {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }

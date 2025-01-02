@@ -1,78 +1,71 @@
 import React from "react";
-import "./Users.css"
+import "./Users.css";
 
 // axios with baseURL set
 import UserComponent from "./User";
-import {connect, ConnectedProps} from "react-redux";
-import {RootState} from "../redux/rootReducer";
-import {ThunkDispatch} from "redux-thunk";
+import { connect, ConnectedProps } from "react-redux";
+import { RootState } from "../redux/rootReducer";
+import { ThunkDispatch } from "redux-thunk";
 // import {fetchUsers} from "../redux/user/user.actions";
-import {getSortedUsers} from "../redux/user/user.reducer";
+import { getSortedUsers } from "../redux/user/user.reducer";
 
 interface UsersProps {
-    fetchInterval: number
+  fetchInterval: number;
 }
 
-interface UsersState {
-}
-
+interface UsersState {}
 
 class Users extends React.Component<PropsFromRedux, UsersState> {
+  private interval: NodeJS.Timeout | undefined;
 
-    private interval: NodeJS.Timeout | undefined;
+  // componentDidMount() {
+  // this.props.fetchUsers()
+  //
+  // // will run every fetchInterval/1000 seconds
+  // this.interval = setInterval(() => {
+  //     this.props.fetchUsers()
+  // }, this.props.fetchInterval);
 
-    // componentDidMount() {
-        // this.props.fetchUsers()
-        //
-        // // will run every fetchInterval/1000 seconds
-        // this.interval = setInterval(() => {
-        //     this.props.fetchUsers()
-        // }, this.props.fetchInterval);
+  // }
 
+  // componentWillUnmount() {
+  //     if (this.interval) {
+  //         clearInterval(this.interval)
+  //     }
+  // }
 
-    // }
-
-    // componentWillUnmount() {
-    //     if (this.interval) {
-    //         clearInterval(this.interval)
-    //     }
-    // }
-
-    render() {
-        return (
-            <>
-                <table>
-                    <tbody>
-                    {this.props.sortedUsers.map((user) => {
-                        return (
-                            <tr key={user._id}>
-                                <UserComponent
-                                    user={user}/>
-                            </tr>
-                        )
-                    })}
-                    </tbody>
-                </table>
-            </>
-        )
-    }
+  render() {
+    return (
+      <>
+        <table>
+          <tbody>
+            {this.props.sortedUsers.map((user) => {
+              return (
+                <tr key={user._id}>
+                  <UserComponent user={user} />
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </>
+    );
+  }
 }
 
-
-type PropsFromRedux = ConnectedProps<typeof connector> & UsersProps
+type PropsFromRedux = ConnectedProps<typeof connector> & UsersProps;
 const mapStateToProps = (state: RootState) => {
-    return {
-        sortedUsers: getSortedUsers(state.user)
-    }
-}
+  return {
+    sortedUsers: getSortedUsers(state.user),
+  };
+};
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => {
-    return {
-        // fetchUsers: () => dispatch(fetchUsers()),
-    }
-
-}
+  return {
+    // fetchUsers: () => dispatch(fetchUsers()),
+  };
+};
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(Users)
+export default connector(Users);
