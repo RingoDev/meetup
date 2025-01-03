@@ -7,7 +7,7 @@ import webSocket from "ws";
 import http from "http";
 import getRoute from "./routes/users";
 import { initializeDB } from "./mongoDatastore";
-import middleware from "./middleware";
+import middleware from "./ws/middleware";
 
 dotenv.config();
 
@@ -36,11 +36,7 @@ wss.on("connection", middleware);
 
 //Connect to Mongo-DB
 mongoose
-  .connect(process.env.DB_CONNECTION ? process.env.DB_CONNECTION : "", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-  })
+  .connect(process.env.DB_CONNECTION ? process.env.DB_CONNECTION : "")
   .then((_value) => {
     console.log("connected to DB");
     initializeDB();

@@ -12,6 +12,9 @@ Der Client startet auf port 3000
 
 The server needs to be able to connect to a Mongo DB instance
 
-You can spin one up locally with `mongodb://localhost:27017/`
+You can spin one up locally with `podman run -p 27017:27017 mongo`
+
+
+`mongodb://localhost:27017/`
 
 WIP currently testing out Bun

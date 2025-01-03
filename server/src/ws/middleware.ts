@@ -8,14 +8,14 @@ import {
   USER_CREATED,
   WS_MESSAGE_FROM_CLIENT,
   WS_MESSAGE_FROM_SERVER,
-} from "./ws/messageTypes";
+} from "./messageTypes";
 import {
   createUser,
   getAllUsers,
   removeUser,
   updateUser,
-} from "./mongoDatastore";
-import { User } from "./types/user";
+} from "../mongoDatastore";
+import { User } from "../types/user";
 
 const socketToUser: Map<string, string> = new Map();
 

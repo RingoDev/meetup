@@ -42,20 +42,20 @@ export function updateUser(user: User) {
         name: user.name,
       },
       { new: true },
-      (_error, doc: Document | null, _result) => {
-        if (doc === null) {
-          console.log("User didn't exist in the DB");
-          reject("User didn't exist in the DB");
-        } else {
-          console.log("Updated User to", doc);
-          const user: User | undefined = docToUser(doc);
-          if (!user) reject("Invalid Document");
-          else resolve(user);
-        }
-      },
-    );
+    ).then((doc) => {
+      if (doc === null) {
+        console.log("User didn't exist in the DB");
+        reject("User didn't exist in the DB");
+      } else {
+        console.log("Updated User to", doc);
+        const user: User | undefined = docToUser(doc);
+        if (!user) reject("Invalid Document");
+        else resolve(user);
+      }
+    });
   });
 }
+
 //todo check if val is a User
 /**
  * Removes a User with certain id in DB
@@ -63,16 +63,13 @@ export function updateUser(user: User) {
  * @return a {@link Promise} that resolves to the deleted {@link User}
  */
 export function removeUser(id: string) {
-  return new Promise((resolve, reject) => {
-    UserModel.findByIdAndRemove(id)
-      .then((val: any) => resolve(val))
-      .catch((err: any) => reject(err));
+  return new Promise((resolve, _) => {
+    UserModel.findByIdAndDelete(id).then((val) => resolve(val));
   });
 }
 
 /**
- * Returns all  a User with certain id in DB
- * @param id
+ * Returns all Users
  * @return a {@link Promise} that resolves to all current {@link User}
  */
 export function getAllUsers() {
@@ -129,20 +126,20 @@ function docToUser(doc: any): User | undefined {
  */
 export function initializeDB() {
   // remove all Users on startup
-  UserModel.deleteMany({}, (err) => {
+  UserModel.deleteMany({}).then((result) => {
+    console.log(`Deleted all ${result.deletedCount} Users`);
     // for (let testUser of getTestUsers()) {
-    //     UserModel.findOne({name: testUser.name},
-    //         (_error, result) => {
-    //             // if there was no user with the name -> create User
-    //             if (result === null) {
-    //                 console.log("Testuser was not in the db ")
-    //                 const newUser = new UserModel(testUser)
-    //                 newUser.save().then((result) => console.log("Testuser was saved to db ", result))
-    //
-    //             } else {
-    //                 console.log("Testuser was in the db ", result)
-    //             }
-    //         })
+    //   UserModel.findOne({ name: testUser.name }).then((result) => {
+    //     if (result === null) {
+    //       console.log("Testuser was not in the db ");
+    //       const newUser = new UserModel(testUser);
+    //       newUser
+    //           .save()
+    //           .then((result) => console.log("Testuser was saved to db ", result));
+    //     } else {
+    //       console.log("Testuser was in the db ", result);
+    //     }
+    //   });
     // }
   });
 }
