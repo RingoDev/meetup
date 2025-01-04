@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./server
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build the server
         working-directory: ./server
