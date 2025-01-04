@@ -1,10 +1,11 @@
-import { applyMiddleware, createStore } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
+import socketMiddleware from "./socket/middleware";
+import userReducer from "./user/user.reducer";
 
-import rootReducer from "./rootReducer";
-import thunk from "redux-thunk";
-import socketMiddleware from "./middleware";
+const store = configureStore({
+  reducer: userReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(socketMiddleware),
+});
 
-export default createStore(
-  rootReducer,
-  applyMiddleware(socketMiddleware, thunk),
-);
+export default store;

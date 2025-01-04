@@ -1,3 +1,5 @@
+import { LatLng } from "../types/latLng";
+
 function rad(degrees: number) {
   return (degrees * Math.PI) / 180;
 }
@@ -8,7 +10,7 @@ function deg(radians: number) {
 
 function normalizeLatitude(point: { lon: number; lat: number }) {
   if (Math.abs(point.lat) > rad(90)) {
-    // @ts-ignore
+    //@ts-expect-error TODO check if this should be fixed
     point.lat = rad(180) - point.lat - 2 * rad(180) * (point.lat < -rad(90));
     point.lon = normalizeLongitude(point.lon - rad(180));
   }
@@ -16,7 +18,7 @@ function normalizeLatitude(point: { lon: number; lat: number }) {
 }
 
 function normalizeLongitude(lon: number) {
-  let n = Math.PI;
+  const n = Math.PI;
   if (lon > n) {
     lon -= 2 * n;
   } else if (lon < -n) {
@@ -26,12 +28,12 @@ function normalizeLongitude(lon: number) {
 }
 
 export function calculate(
-  p: { longitude?: number; latitude?: number }[],
+  p: LatLng[],
   method: "centerGravity" | "minDistance" | "averageLatLng",
 ) {
-  let parlat = 0,
+  const parlat = 0,
     parlng = 0;
-  let par = 0;
+  const par = 0;
   let midlat = 0,
     midlng = 0;
   let x = 0;
@@ -39,19 +41,19 @@ export function calculate(
   let z = 0;
   let x1, y1, z1;
   let pt = { lat: 0, lon: 0 };
-  let lats1 = [];
-  let lons1 = [];
-  let sinlats = [];
-  let coslats = [];
+  const lats1 = [];
+  const lons1 = [];
+  const sinlats = [];
+  const coslats = [];
 
   if (p.length === 0) return;
   // iterate over the points
   for (let i = 0; i < p.length; i++) {
     const point = p[i];
-    if (!point.latitude || !point.longitude) continue;
+    if (!point.lat || !point.lng) continue;
 
-    lats1[i] = rad(point.latitude);
-    lons1[i] = rad(point.longitude);
+    lats1[i] = rad(point.lat);
+    lons1[i] = rad(point.lng);
     sinlats[i] = Math.sin(lats1[i]);
     coslats[i] = Math.cos(lats1[i]);
     x1 = coslats[i] * Math.cos(lons1[i]);
@@ -65,7 +67,7 @@ export function calculate(
   midlat = Math.atan2(z, Math.sqrt(x ** 2 + y ** 2));
 
   if (Math.abs(x) < 1.0e-9 && Math.abs(y) < 1.0e-9 && Math.abs(z) < 1.0e-9) {
-    console.log("The midpoint is the center of the earth.");
+    console.info("The midpoint is the center of the earth.");
   } else {
     if (method === "averageLatLng") {
       y = 0;
@@ -88,8 +90,8 @@ export function calculate(
         let lat2, slat, cdist;
         let minlat = 0;
         let minlon = 0;
-        let t = [8, 6, 7, 2, 0, 1, 5, 3, 4];
-        let scale = [0.7071, 0.7071, 1, 0.7071, 0.7071, 1, 1, 1, 1];
+        const t = [8, 6, 7, 2, 0, 1, 5, 3, 4];
+        const scale = [0.7071, 0.7071, 1, 0.7071, 0.7071, 1, 1, 1, 1];
         let testcenter = true;
         let i = lats1.length + 8;
         while (distrad > 2.0e-8 && tries < 5000) {
@@ -162,7 +164,7 @@ export function calculate(
           tries++;
         }
         if (tries >= 5000) {
-          console.log(
+          console.info(
             "The center of distance for these " +
               p.length +
               " places could not be precisely located. The displayed center of distance is probably accurate to within two degrees.",
@@ -178,6 +180,6 @@ export function calculate(
       midlat = parlat;
       midlng = parlng;
     }
-    return { longitude: midlng, latitude: midlat };
+    return { lng: midlng, lat: midlat };
   }
 }

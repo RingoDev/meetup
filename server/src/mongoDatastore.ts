@@ -93,20 +93,15 @@ export function getTestUsers() {
   const users = [];
 
   users.push({
-    name: "Testuser1",
+    name: "Amy",
     latitude: 48.33830196724644,
     longitude: 14.317141245631463,
   });
-  users.push({
-    name: "Testuser2",
-    latitude: 48.34406412842475,
-    longitude: 14.305296611071041,
-  });
-  users.push({
-    name: "Testuser3",
-    latitude: 48.31627424066361,
-    longitude: 14.312077235203457,
-  });
+  // users.push({
+  //   name: "Bob",
+  //   latitude: 48.34406412842475,
+  //   longitude: 14.305296611071041,
+  // });
   return users;
 }
 
@@ -128,18 +123,11 @@ export function initializeDB() {
   // remove all Users on startup
   UserModel.deleteMany({}).then((result) => {
     console.log(`Deleted all ${result.deletedCount} Users`);
-    // for (let testUser of getTestUsers()) {
-    //   UserModel.findOne({ name: testUser.name }).then((result) => {
-    //     if (result === null) {
-    //       console.log("Testuser was not in the db ");
-    //       const newUser = new UserModel(testUser);
-    //       newUser
-    //           .save()
-    //           .then((result) => console.log("Testuser was saved to db ", result));
-    //     } else {
-    //       console.log("Testuser was in the db ", result);
-    //     }
-    //   });
-    // }
+    for (let testUser of getTestUsers()) {
+      const newUser = new UserModel(testUser);
+      newUser
+        .save()
+        .then((result) => console.log("Testuser was saved to db ", result));
+    }
   });
 }

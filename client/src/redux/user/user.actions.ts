@@ -1,3 +1,4 @@
+import { createAction } from "@reduxjs/toolkit";
 import {
   SET_LOCATION,
   SET_USER_CHECKED,
@@ -5,57 +6,34 @@ import {
   SET_USERNAME,
   UPDATE_USERS,
 } from "./user.types";
-import { AppUser, BaseUser, MongoUser } from "../../data/User";
-import { WS_POST_LOCATION } from "../socket/socket.types";
+import { AppUser, MongoUser } from "../../types/User";
+import { LatLng } from "../../types/latLng";
 
-export interface SetUserChecked {
-  type: typeof SET_USER_CHECKED;
-  user: AppUser;
-  checked: boolean;
-}
+// Set User Checked Action
+export const setUserChecked = createAction<
+  { user: AppUser; checked: boolean },
+  typeof SET_USER_CHECKED
+>(SET_USER_CHECKED);
 
-export const setUserChecked = (
-  user: AppUser,
-  checked: boolean,
-): SetUserChecked => ({
-  type: SET_USER_CHECKED,
-  user,
-  checked,
-});
+// Set Username Action
+export const setUsername = createAction<
+  { username: string },
+  typeof SET_USERNAME
+>(SET_USERNAME);
 
-export interface SetUsername {
-  type: typeof SET_USERNAME;
-  username: string;
-}
+// Set Location Action
+export const setLocation = createAction<
+  { location: LatLng },
+  typeof SET_LOCATION
+>(SET_LOCATION);
 
-export const setUsername = (username: string): SetUsername => ({
-  type: SET_USERNAME,
-  username,
-});
+// Update Users Action
+export const updateUsers = createAction<
+  { users: MongoUser[] },
+  typeof UPDATE_USERS
+>(UPDATE_USERS);
 
-export interface SetLocation {
-  type: typeof SET_LOCATION;
-  location: GeolocationPosition;
-}
-
-export const setLocation = (location: GeolocationPosition): SetLocation => ({
-  type: SET_LOCATION,
-  location,
-});
-
-export interface updateUsers {
-  type: typeof UPDATE_USERS;
-  users: MongoUser[];
-}
-
-export const setUsers = (users: MongoUser[]): updateUsers => ({
-  type: UPDATE_USERS,
-  users,
-});
-
-export const setUserID = (id: string) => ({ type: SET_USER_ID, userID: id });
-
-export const wsPostLocation = (user: BaseUser) => ({
-  type: WS_POST_LOCATION,
-  user,
-});
+// Set User ID Action
+export const setUserID = createAction<{ userID: string }, typeof SET_USER_ID>(
+  SET_USER_ID,
+);

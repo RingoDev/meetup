@@ -1,4 +1,4 @@
-import { BaseUser, MongoUser } from "../../data/User";
+import { BaseUser, MongoUser } from "../../types/User";
 
 export interface WS_MESSAGE_FROM_SERVER extends WS_MESSAGE {
   type: typeof MESSAGE | typeof UPDATE_USERS | typeof USER_CREATED;

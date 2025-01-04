@@ -17,7 +17,7 @@ channels:
         $ref: "#/components/messages/user_created"
   updateUsers:
     publish:
-      description: Updates data of currently connected clients
+      description: Updates types of currently connected clients
       operationId: updateUsers
       message:
         $ref: "#/components/messages/update_users"

@@ -1,56 +1,36 @@
 import React from "react";
-import Location from "./Location";
 import Leaflet from "../map/Leaflet";
 import Users from "../users/Users";
-import { connect, ConnectedProps } from "react-redux";
-import { RootState } from "../redux/rootReducer";
-import { getLocation, getUsername, getUsers } from "../redux/user/user.reducer";
-import { ThunkDispatch } from "redux-thunk";
+import { useSelector } from "react-redux";
+import { getLocation, getUsername } from "../redux/user/user.reducer";
 import "./App.css";
+import useLocation from "../hooks/useLocation";
 
-// import {fetchUsers, postLocation} from "../redux/user/user.actions";
+const App = () => {
+  const username = useSelector(getUsername);
+  const location = useSelector(getLocation);
 
-class App extends React.Component<PropsFromRedux, {}> {
-  render() {
-    return (
-      <>
-        <div className="App">
-          <Location username={this.props.username} interval={5000} />
-          {this.props.location ? (
-            <></>
-          ) : (
-            <div>You have to activate Location Services to use this App</div>
-          )}
-          <div id={"container"}>
-            <div id={"map-container"}>
-              <Leaflet />
-            </div>
-            <div id={"userContainer"} className={"p-5"}>
-              <Users fetchInterval={5000} />
-            </div>
+  useLocation(username);
+
+  return (
+    <>
+      <div className="App">
+        {location ? (
+          <></>
+        ) : (
+          <div>You have to activate Location Services to use this App</div>
+        )}
+        <div id={"container"}>
+          <div id={"map-container"}>
+            <Leaflet />
+          </div>
+          <div id={"userContainer"} className={"p-5"}>
+            <Users />
           </div>
         </div>
-      </>
-    );
-  }
-}
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-const mapStateToProps = (state: RootState) => {
-  return {
-    username: getUsername(state.user),
-    location: getLocation(state.user),
-    users: getUsers(state.user),
-  };
+      </div>
+    </>
+  );
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => {
-  return {
-    // fetchUsers: () => dispatch(fetchUsers()),
-    // postLocation: (baseUser: BaseUser) => dispatch(postLocation(baseUser))
-  };
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default connector(App);
+export default App;

@@ -1,96 +1,94 @@
+import { AppUser, MongoUser } from "../../types/User";
+import { createReducer } from "@reduxjs/toolkit";
 import {
-  SET_LOCATION,
-  SET_USER_CHECKED,
-  SET_USER_ID,
-  SET_USERNAME,
-  UPDATE_USERS,
-} from "./user.types";
-import { AxiosError } from "axios";
-import { MongoUser, AppUser } from "../../data/User";
+  setLocation,
+  setUserChecked,
+  setUserID,
+  setUsername,
+  updateUsers,
+} from "./user.actions";
+import { LatLng } from "../../types/latLng";
+import { calculate } from "../../map/calculate";
 
-const INITIAL_STATE: userState = {
-  fetchUsersPending: false,
+const INITIAL_STATE: State = {
   users: [],
-  fetchUsersError: undefined,
-  postLocationPending: false,
-  location: undefined,
-  userID: undefined,
-  username: "NONAME",
-  postLocationError: undefined,
+  user: {
+    name: "NONAME",
+  },
 };
 
-export interface userState {
-  fetchUsersPending: boolean;
+export interface State {
   users: AppUser[];
-  fetchUsersError: AxiosError | undefined;
-  postLocationPending: boolean;
-  location: GeolocationPosition | undefined;
-  userID: string | undefined;
-  username: string;
-  postLocationError: AxiosError | undefined;
+  midpoint?: LatLng;
+  user: {
+    location?: LatLng;
+    id?: string;
+    name: string;
+  };
 }
 
-const reducer = (
-  state = INITIAL_STATE,
-  action: {
-    type: string;
-    error?: AxiosError;
-    users?: MongoUser[];
-    userID?: string;
-    user?: AppUser;
-    checked?: boolean;
-    username?: string;
-    location?: GeolocationPosition;
-  },
-): typeof INITIAL_STATE => {
-  console.log(action);
+const reducer = createReducer(INITIAL_STATE, (builder) => {
+  builder
+    .addCase(setUsername, (state, action) => {
+      state.user.name = action.payload.username
+        ? action.payload.username
+        : "ERRORNAME";
+    })
+    .addCase(setLocation, (state, action) => {
+      state.user.location = action.payload.location
+        ? action.payload.location
+        : undefined;
+    })
+    .addCase(updateUsers, (state, action) => {
+      const updatedUsers = setUsersFromDB(
+        state.users,
+        state.user.id,
+        action.payload.users,
+        state.user.location,
+      );
+      state.midpoint = calculate(
+        // @ts-expect-error typescript cannot infer that filter filters out undefined
+        updatedUsers
+          .filter((u) => u.checked)
+          .filter((u) => u.latitude !== undefined && u.longitude !== undefined)
+          .map((u) => ({ lat: u.latitude, lng: u.longitude })),
+        "minDistance",
+      );
 
-  switch (action.type) {
-    case SET_USERNAME: {
-      return {
-        ...state,
-        username: action.username ? action.username : "ERRORNAME",
-      };
-    }
-    case SET_LOCATION: {
-      return {
-        ...state,
-        location: action.location ? action.location : undefined,
-      };
-    }
+      state.users = updatedUsers;
+    })
+    .addCase(setUserChecked, (state, action) => {
+      const updatedUsers = setUserCheckedUtil(
+        state.users,
+        action.payload.user,
+        action.payload.checked,
+      );
 
-    case UPDATE_USERS:
-      console.log("Fetched users", action.users);
-      return {
-        ...state,
-        users: setUsersFromDB(
-          state.users,
-          state.userID,
-          action.users,
-          state.location,
-        ),
-      };
+      state.midpoint = calculate(
+        // @ts-expect-error typescript cannot infer that filter filters out undefined
+        updatedUsers
+          .filter((u) => u.checked)
+          .filter((u) => u.latitude !== undefined && u.longitude !== undefined)
+          .map((u) => ({ lat: u.latitude, lng: u.longitude })),
+        "minDistance",
+      );
 
-    case SET_USER_CHECKED:
-      return {
-        ...state,
-        users: setUserChecked(state.users, action.user, action.checked),
-      };
-    case SET_USER_ID:
-      return {
-        ...state,
-        userID: action.userID,
-      };
-    default:
-      return state;
-  }
-};
+      state.users = updatedUsers;
+    })
+    .addCase(setUserID, (state, action) => {
+      state.user.id = action.payload.userID;
+    });
+});
 
-function setUserChecked(users: AppUser[], user?: AppUser, checked?: boolean) {
+function setUserCheckedUtil(
+  users: AppUser[],
+  user?: AppUser,
+  checked?: boolean,
+) {
   if (!user || checked === undefined) return users;
 
   const result: AppUser[] = [];
-  for (let u of users) {
+  for (const u of users) {
     if (u._id === user._id) {
       result.push({ ...u, checked: checked });
     } else {
@@ -104,12 +102,12 @@ function setUsersFromDB(
   users: AppUser[],
   id?: string,
   newUsers?: MongoUser[],
-  location?: GeolocationPosition,
+  location?: LatLng,
 ) {
   if (!newUsers) return users;
 
   const result: AppUser[] = [];
-  for (let newUser of newUsers) {
+  for (const newUser of newUsers) {
     const correspondingUser: AppUser | undefined = getUser(newUser, users);
     if (correspondingUser) {
       // user exists already
@@ -144,18 +142,17 @@ function setUsersFromDB(
           checked: true,
           groupID: 0,
           isMain: true,
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+          latitude: location.lat,
+          longitude: location.lng,
         });
       }
     }
   }
-  console.log("The result", result);
   return result;
 }
 
 function getUser(newUser: MongoUser, users: AppUser[]) {
-  for (let user of users) {
+  for (const user of users) {
     if (user._id === newUser._id) return user;
   }
 }
@@ -168,25 +165,13 @@ function validateDocument(doc: MongoUser): boolean {
   return true;
 }
 
-export const getUsers = (state: userState) => state.users;
-export const getSortedUsers = (state: userState) =>
-  state.users.slice().sort((u1, u2) => {
-    if (u1.isMain) return -1;
-    else if (u2.isMain) return 1;
-    else return u1.name.localeCompare(u2.name);
-  });
+export const getUsers = (state: State) => state.users;
 
-export const getUsersPending = (state: userState) => state.fetchUsersPending;
-export const getUsersError = (state: userState) => state.fetchUsersError;
-export const getLocation = (state: userState) => state.location;
-export const getUsername = (state: userState) => {
-  if (state === undefined) console.log("HEY");
-  return state.username;
+export const getLocation = (state: State) => state.user.location;
+export const getUsername = (state: State) => {
+  return state.user.name;
 };
-
-export const getUserID = (state: userState) => state.userID;
-export const getLocationPending = (state: userState) =>
-  state.postLocationPending;
-export const getLocationError = (state: userState) => state.postLocationError;
+export const getUserID = (state: State) => state.user.id;
+export const getMidpoint = (state: State) => state.midpoint;
 
 export default reducer;

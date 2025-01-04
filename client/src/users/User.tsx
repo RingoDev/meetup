@@ -1,18 +1,16 @@
 import React from "react";
-import { AppUser } from "../data/User";
+import { AppUser } from "../types/User";
 import "./User.css";
-import { RootState } from "../redux/rootReducer";
-import { ThunkDispatch } from "redux-thunk";
 import { setUserChecked } from "../redux/user/user.actions";
-import { connect, ConnectedProps } from "react-redux";
+import { useDispatch } from "react-redux";
 
 interface UserProps {
   user: AppUser;
 }
 
-type PropsFromRedux = ConnectedProps<typeof connector> & UserProps;
+const User = (props: UserProps) => {
+  const dispatch = useDispatch();
 
-const User: React.FC<PropsFromRedux> = (props) => {
   return (
     <>
       <td
@@ -27,7 +25,12 @@ const User: React.FC<PropsFromRedux> = (props) => {
                 disabled={!props.user.longitude}
                 checked={props.user.checked}
                 onChange={(event) =>
-                  props.setChecked(props.user, event.target.checked)
+                  dispatch(
+                    setUserChecked({
+                      user: props.user,
+                      checked: event.target.checked,
+                    }),
+                  )
                 }
                 type="checkbox"
               />
@@ -40,17 +43,4 @@ const User: React.FC<PropsFromRedux> = (props) => {
   );
 };
 
-const mapStateToProps = (_state: RootState) => {
-  return {};
-};
-
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => {
-  return {
-    setChecked: (user: AppUser, checked: boolean) =>
-      dispatch(setUserChecked(user, checked)),
-  };
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default connector(User);
+export default User;

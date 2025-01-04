@@ -1,9 +1,9 @@
 export const WS_CONNECT = "WS_CONNECT";
 export const WS_DISCONNECT = "WS_DISCONNECT";
-export const NEW_MESSAGE = "NEW_MESSAGE";
+export const WS_NEW_MESSAGE = "WS_NEW_MESSAGE";
 
-export const SET_CONNECTED = "SET_CONNECTED";
-export const SET_DISCONNECTED = "SET_DISCONNECTED";
+export const WS_SET_CONNECTED = "WS_SET_CONNECTED";
+export const WS_SET_DISCONNECTED = "WS_SET_DISCONNECTED";
 
 export const WS_CREATE_USER = "WS_CREATE_USER";
 

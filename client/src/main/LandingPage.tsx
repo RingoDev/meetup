@@ -1,38 +1,38 @@
 import App from "./App";
 import React, { useEffect, useState } from "react";
 import "./landingPage.css";
-import { connect, ConnectedProps } from "react-redux";
-import { RootState } from "../redux/rootReducer";
-import {
-  getLocation,
-  getUserID,
-  getUsername,
-} from "../redux/user/user.reducer";
-import { ThunkDispatch } from "redux-thunk";
+import { useSelector } from "react-redux";
+import { getUsername } from "../redux/user/user.reducer";
 import { setUsername } from "../redux/user/user.actions";
-import { createUser, wsConnect } from "../redux/socket/socket.actions";
+import { connect, createUser } from "../redux/socket/socket.actions";
+import useActionDispatch from "../hooks/useActionDispatch";
 
-const LandingPage: React.FC<PropsFromRedux> = (props) => {
+const LandingPage = () => {
   const [tempName, setTempName] = useState<string>("");
+
+  const setUsernameDispatch = useActionDispatch(setUsername);
+  const createUserDispatch = useActionDispatch(createUser);
+  const wsConnectDispatch = useActionDispatch(connect);
+
+  const username = useSelector(getUsername);
 
   const submitName = (name: string) => {
     if (name.trim() !== "") {
-      props.setUsername(name.trim());
-      props.createUser(name.trim());
+      setUsernameDispatch({ username: name.trim() });
+      createUserDispatch({ username: name.trim() });
     }
   };
 
   useEffect(() => {
-    // connect to Websocket
-    props.wsConnect();
-  }, []); // eslint-disable-line
+    wsConnectDispatch(undefined);
+  }, []);
 
   return (
     <>
       <h1 className={"center"} style={{ color: "white" }}>
         Meet<span style={{ color: "rgb(255, 179, 0)" }}>Up</span>
       </h1>
-      {props.username !== "NONAME" ? (
+      {username !== "NONAME" ? (
         <App />
       ) : (
         <div id={"landingContainer"} className={"container"}>
@@ -65,23 +65,4 @@ const LandingPage: React.FC<PropsFromRedux> = (props) => {
   );
 };
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-const mapStateToProps = (state: RootState) => {
-  return {
-    username: getUsername(state.user),
-    location: getLocation(state.user),
-    userID: getUserID(state.user),
-  };
-};
-
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>) => {
-  return {
-    setUsername: (username: string) => dispatch(setUsername(username)),
-    createUser: (username: string) => dispatch(createUser(username)),
-    wsConnect: () => dispatch(wsConnect()),
-  };
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default connector(LandingPage);
+export default LandingPage;
