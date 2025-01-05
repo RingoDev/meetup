@@ -33,8 +33,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/meetup:latest .
+          docker build -t ghcr.io/ringodev/meetup:latest ./server
 
       - name: Publish Docker image
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/meetup:latest
+          docker push ghcr.io/ringodev/meetup:latest
