@@ -10,3 +10,5 @@ website.
 
 This projects consists of an SPA React app that is built with Vite and a NodeJS/ExpressJS server on the backend.
 All communication is done through the websocket protocol.
+
+The state and location of all users is stored in a mongoDB database.
