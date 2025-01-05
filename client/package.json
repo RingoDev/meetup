@@ -12,7 +12,6 @@
   "dependencies": {
     "@materializecss/materialize": "^2.2.1",
     "@reduxjs/toolkit": "^2.5.0",
-    "axios": "1.7.4",
     "leaflet": "^1.9.4",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -21,7 +20,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@types/axios": "^0.14.0",
     "@types/leaflet": "^1.9.15",
     "@types/node": "^20.0.0",
     "@types/react": "^17.0.83",
