@@ -7,5 +7,5 @@
     "server",
     "client"
   ],
-  "packageManager": "yarn@2.4.3"
+  "packageManager": "yarn@4.6.0"
 }

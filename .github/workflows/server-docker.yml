@@ -1,4 +1,4 @@
-name: Build and Run Server with Docker and Bun
+name: Build and publish server to GHCR
 
 on:
   push:
@@ -23,26 +23,18 @@ jobs:
         run: corepack enable
 
       - name: Install dependencies
-        working-directory: ./server
-        run: yarn install --immutable
+        run: yarn workspace server install --immutable
 
       - name: Build the server
-        working-directory: ./server
-        run: yarn build
+        run: yarn workspace server build
 
-      # Step 2: Set up Docker (preinstalled on GitHub-hosted runners)
-      - name: Log in to Docker Hub (Optional)
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      # Step 6: Build the Docker image
       - name: Build Docker image
         run: |
-          docker build -t ringodev/meetup:latest .
+          docker build -t ghcr.io/${{ github.repository_owner }}/meetup:latest .
 
-      # Step 7: Push the Docker image
       - name: Publish Docker image
         run: |
-          docker push my-repo/my-server:latest
+          docker push ghcr.io/${{ github.repository_owner }}/meetup:latest
