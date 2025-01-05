@@ -1,26 +1,11 @@
 import dotenv from "dotenv";
-import express from "express";
 import mongoose from "mongoose";
-import bodyParser from "body-parser";
-import cors from "cors";
 import webSocket from "ws";
 import http from "http";
-import getRoute from "./routes/users";
 import { initializeDB } from "./mongoDatastore";
 import middleware from "./ws/middleware";
 
 if (process.env.NODE_ENV !== "production") dotenv.config();
-
-const app = express();
-//Middlewares
-app.use(cors());
-app.use(bodyParser.json());
-app.use("/users", getRoute);
-//Routes
-app.get("/", (reg, res) => {
-  res.send("Home");
-});
-app.listen(3002);
 
 const websocketServer = http.createServer((req, res) => {
   console.log(new Date() + " Received request for " + req.url);
