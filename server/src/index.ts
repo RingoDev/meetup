@@ -9,7 +9,7 @@ import getRoute from "./routes/users";
 import { initializeDB } from "./mongoDatastore";
 import middleware from "./ws/middleware";
 
-dotenv.config();
+if (process.env.NODE_ENV !== "production") dotenv.config();
 
 const app = express();
 //Middlewares
