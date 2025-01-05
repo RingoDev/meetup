@@ -1,20 +1,12 @@
-# SE-Project
+# Meet in the middle
 
-## Websocket Documentation
+This project features a simple UI that allows to find a meeting point with everybody else that is currently on the
+website.
 
-[AsyncApi](https://playground.asyncapi.io/?load=https://raw.githubusercontent.com/RingoDev/JKU_SE_project/team2/documentation/asyncapi.yml)
+![meetup-ringodev-com-mobile.png](documentation/meetup-ringodev-com-mobile.png)
+![img.png](documentation/meetup-map.png)
 
-## Client
+## Implementation
 
-Der Client startet auf port 3000
-
-## Server
-
-The server needs to be able to connect to a Mongo DB instance
-
-You can spin one up locally with `podman run -p 27017:27017 mongo`
-
-
-`mongodb://localhost:27017/`
-
-WIP currently testing out Bun
+This projects consists of an SPA React app that is built with Vite and a NodeJS/ExpressJS server on the backend.
+All communication is done through the websocket protocol.
