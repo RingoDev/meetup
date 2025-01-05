@@ -28,8 +28,9 @@ const websocketServer = http.createServer((req, res) => {
   res.end();
 });
 
-websocketServer.listen(3001);
+console.log(`Starting websocket server on port ${process.env.PORT}`);
 
+websocketServer.listen(process.env.PORT);
 const wss = new webSocket.Server({ server: websocketServer });
 
 wss.on("connection", middleware);
