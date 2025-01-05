@@ -2,6 +2,7 @@ FROM node:20-slim
 # Create app directory
 WORKDIR /usr/src/app
 
+COPY package.json package.json
 COPY node_modules node_modules
 COPY dist dist
 
