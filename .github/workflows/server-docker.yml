@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/ringodev/meetup:latest ./server
+          docker build -t ghcr.io/ringodev/meetup:latest .
 
       - name: Publish Docker image
         run: |
