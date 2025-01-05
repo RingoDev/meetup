@@ -1,5 +1,5 @@
-let wsURL = "wss://backend.ringodev.com:3001";
+import dotenv from "dotenv";
 
-if (process.env.NODE_ENV === "development") wsURL = "ws://localhost:3001";
+dotenv.config();
 
-export const WS_URL = wsURL;
+export const WS_URL = process.env.SOCKET_URL;

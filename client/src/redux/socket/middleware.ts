@@ -93,6 +93,8 @@ const socketMiddleware: Middleware = (api) => (next) => (action) => {
         socket.close();
       }
 
+      if (!WS_URL) throw new Error("Websocket is not configured");
+
       // connect to the remote host
       socket = new WebSocket(WS_URL);
 
